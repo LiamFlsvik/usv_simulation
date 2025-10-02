@@ -2,39 +2,246 @@
 
 <scenario>
     <robot name="selene" fixed="false" self_collisions="false">
+
+        <world_transform xyz="0 0 -0.3" rpy="0 0 0"/>
         <base_link name="Base" type="compound" physics="submerged">
-            <external_part name="selene_hull_r" type="model" physics="submerged" buoyant="false">
+            <external_part name="selene_hull_l" type="model" physics="submerged" buoyant="true">
                 <physical>
-                    <mesh filename="../meshes/selene_hull.obj" scale="0.1"/>
-                    <origin rpy="0 0 0" xyz="-0.5 0 0"/>
+                    <mesh filename="../meshes/selene_hull.obj" scale="1"/>
+                    <origin rpy="0 0 0" xyz="0 0 0"/>
                 </physical>
                 <visual>
-                    <mesh filename="../meshes/selene_hull.obj" scale="0.1"/>
+                    <mesh filename="../meshes/selene_hull.obj" scale="1"/>
                     <origin rpy="0 0 0" xyz="0.0 0 0"/>
+                    <look name="CarbonFiber"/>
                 </visual>
                 <material name="Neutral"/>
-                <look name="Yellow"/>
-                <mass value="1000.26"/>
-                <!--<cg xyz="0 0 0" rpy="0 0 0"/>-->
-                <compound_transform xyz="0 150 0" rpy="0 0 0"/>
+                <look name="CarbonFiber"/>
+                <mass value="25.0"/>
+                <cg xyz="0 0 0" rpy="0 0 0"/>
+                <compound_transform xyz="0 -0.3 0" rpy="0 0 0"/>
             </external_part>
-            <external_part name="selene_hull_l" type="model" physics="submerged" buoyant="false">
+
+            <external_part name="selene_hull_r" type="model" physics="submerged" buoyant="true">
                 <physical>
-                    <mesh filename="../meshes/selene_hull.obj" scale="0.1"/>
+                    <mesh filename="../meshes/selene_hull.obj" scale="1"/>
                     <origin rpy="0 0 0" xyz="0.0 0 0"/>
                 </physical>
                 <visual>
-                    <mesh filename="../meshes/selene_hull.obj" scale="0.1"/>
+                    <mesh filename="../meshes/selene_hull.obj" scale="1"/>
                     <origin rpy="0 0 0" xyz="0.0 0 0"/>
                 </visual>
                 <material name="Neutral"/>
-                <look name="Yellow"/>
-                <mass value="1000.26"/>
-                <!--<cg xyz="0 0 0" rpy="0 0 0"/>-->
-                <compound_transform xyz="0 0 0" rpy="0 0 0"/>
+                <look name="CarbonFiber"/>
+                <mass value="25.0"/>
+                <cg xyz="0 0 0" rpy="0 0 0"/>
+                <compound_transform xyz="0 0.3 0" rpy="0 0 0"/>
             </external_part>
         </base_link>
-        <world_transform xyz="0 0 4" rpy="0 0 0"/>
+
+        <joint name="SensorJoint" type="fixed">
+            <parent name="Base"/>
+            <child name="SensorLink"/>
+            <origin xyz="0 0 -0.15" rpy="0.0 0.0 0"/>
+            <axis xyz="1.0 1.0 1.0"/>
+        </joint>
+
+        <link name="SensorLink" type="box" physics="surface">
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <dimensions xyz="0.5 0.75 0.15"/>
+            <material name="Undefined"/>
+            <look name="Gray"/>
+        </link>
+       
+
+    <!--Servo1 & Thruster 1 (left hull front)-->
+        <joint name="Joint1" type="revolute">
+            <parent name="Base"/>
+            <child name="Link1"/>
+            <origin xyz="0.3 -0.3 0.15" rpy="0.0 0.0 0"/>
+            <axis xyz="0.0 0.0 1.0"/>
+        </joint>
+        <link name="Link1" type="box" physics="submerged">
+            <dimensions xyz="0.0405 0.0556 0.020"/>
+            <origin xyz="0.0 0 0" rpy="0.0 0.0 0"/>
+            <material name="Neutral"/>
+            <look name="Green"/>
+        </link>
+
+        <actuator name="Servo1" type="servo">
+            <controller position_gain="1.0" velocity_gain="1.0" max_torque="40.0" max_velocity="0.1"/>
+            <joint name="Joint1"/>
+            <initial position="0.0"/>
+        </actuator>
+
+        <actuator name="Thruster1" type="thruster">
+            <link name="Link1"/>
+            <origin rpy="0.0 0.0 0" xyz="0 0 0.1"/>
+            <specs max_setpoint="50.0" inverted_setpoint="false" normalized_setpoint="false"/>
+            <propeller diameter="0.18" right="true">
+                <mesh filename="../meshes/t200ccw_propeller.obj" scale="1"/>
+                <material name="PolyCarbonatePlastic"/>
+                <look name="Black"/>
+            </propeller>
+            <rotor_dynamics type="zero_order"/>
+            <thrust_model type="linear_interpolation">
+                <input value="-40.0 -20.0 0.0 20.0 40.0"/>
+                <output value="-40.0 -20.0 0.0 20.0 40.0"/>
+            </thrust_model>
+        </actuator>
+    <!-- END Servo1 & Thruster 1 (left hull front)-->
+         
+   <!--Servo 2 & Thruster 2 (left hull back)-->
+     <joint name="Joint2" type="revolute">
+            <parent name="Base"/>
+            <child name="Link2"/>
+            <origin xyz="-0.3 -0.3 0.15" rpy="0.0 0.0 0"/>
+            <axis xyz="0.0 0.0 1.0"/>
+        </joint>
+        <link name="Link2" type="box" physics="submerged">
+            <dimensions xyz="0.0405 0.0556 0.020"/>
+            <origin xyz="0.0 0 0" rpy="0.0 0.0 0"/>
+            <material name="Neutral"/>
+            <look name="Green"/>
+        </link>
+
+        <actuator name="Servo2" type="servo">
+            <controller position_gain="1.0" velocity_gain="1.0" max_torque="40.0" max_velocity="0.1"/>
+            <joint name="Joint2"/>
+            <initial position="0.0"/>
+        </actuator>
+
+        <actuator name="Thruster2" type="thruster">
+            <link name="Link2"/>
+            <origin rpy="0.0 0.0 0" xyz="0 0 0.1"/>
+            <specs max_setpoint="50.0" inverted_setpoint="false" normalized_setpoint="false"/>
+            <propeller diameter="0.18" right="true">
+                <mesh filename="../meshes/t200ccw_propeller.obj" scale="1"/>
+                <material name="PolyCarbonatePlastic"/>
+                <look name="Black"/>
+            </propeller>
+            <rotor_dynamics type="zero_order"/>
+            <thrust_model type="linear_interpolation">
+                <input value="-40.0 -20.0 0.0 20.0 40.0"/>
+                <output value="-40.0 -20.0 0.0 20.0 40.0"/>
+            </thrust_model>
+        </actuator>
+         <!--END Servo 2 & Thruster 2 (left hull front)-->
+
+          <!--Servo 3 & Thruster 3 (right hull front)-->
+        <joint name="Joint3" type="revolute">
+            <parent name="Base"/>
+            <child name="Link3"/>
+            <origin xyz="0.3 0.3 0.15" rpy="0.0 0.0 0"/>
+            <axis xyz="0.0 0.0 1.0"/>
+        </joint>
+        <link name="Link3" type="box" physics="submerged">
+            <dimensions xyz="0.0405 0.0556 0.020"/>
+            <origin xyz="0.0 0 0" rpy="0.0 0.0 0"/>
+            <material name="Neutral"/>
+            <look name="Green"/>
+        </link>
+
+        <actuator name="Servo3" type="servo">
+            <controller position_gain="1.0" velocity_gain="1.0" max_torque="40.0" max_velocity="0.1"/>
+            <joint name="Joint3"/>
+            <initial position="0.0"/>
+        </actuator>
+
+        <actuator name="Thruster3" type="thruster">
+            <link name="Link3"/>
+            <origin rpy="0.0 0.0 0" xyz="0 0 0.1"/>
+            <specs max_setpoint="50.0" inverted_setpoint="false" normalized_setpoint="false"/>
+            <propeller diameter="0.18" right="true">
+                <mesh filename="../meshes/t200ccw_propeller.obj" scale="1"/>
+                <material name="PolyCarbonatePlastic"/>
+                <look name="Black"/>
+            </propeller>
+            <rotor_dynamics type="zero_order"/>
+            <thrust_model type="linear_interpolation">
+                <input value="-40.0 -20.0 0.0 20.0 40.0"/>
+                <output value="-40.0 -20.0 0.0 20.0 40.0"/>
+            </thrust_model>
+        </actuator>
+        <!--END Servo 3 & Thruster 3 (left hull front)-->
+
+    <!--Servo 4 & Thruster 4 (right hull back)-->
+        <joint name="Joint4" type="revolute">
+            <parent name="Base"/>
+            <child name="Link4"/>
+            <origin xyz="-0.3 0.3 0.15" rpy="0.0 0.0 0"/>
+            <axis xyz="0.0 0.0 1.0"/>
+        </joint>
+        <link name="Link4" type="box" physics="submerged">
+            <dimensions xyz="0.0405 0.0556 0.020"/>
+            <origin xyz="0.0 0 0" rpy="0.0 0.0 0"/>
+            <material name="Neutral"/>
+            <look name="Green"/>
+        </link>
+
+        <actuator name="Servo4" type="servo">
+            <controller position_gain="1.0" velocity_gain="1.0" max_torque="40.0" max_velocity="0.1"/>
+            <joint name="Joint4"/>
+            <initial position="0.0"/>
+        </actuator>
+
+        <actuator name="Thruster4" type="thruster">
+            <link name="Link4"/>
+            <origin rpy="0.0 0.0 0" xyz="0 0 0.1"/>
+            <specs max_setpoint="50.0" inverted_setpoint="false" normalized_setpoint="false"/>
+            <propeller diameter="0.18" right="true">
+                <mesh filename="../meshes/t200ccw_propeller.obj" scale="1"/>
+                <material name="PolyCarbonatePlastic"/>
+                <look name="Black"/>
+            </propeller>
+            <rotor_dynamics type="zero_order"/>
+            <thrust_model type="linear_interpolation">
+                <input value="-40.0 -20.0 0.0 20.0 40.0"/>
+                <output value="-40.0 -20.0 0.0 20.0 40.0"/>
+            </thrust_model>
+        </actuator> 
+
+    <!--Sensors-->
+        <sensor name="imu" rate="10.0" type="imu">
+            <range angular_velocity="10.0 10.0 5.0" linear_acceleration="10.0"/>
+            <noise angle="0.1 0.1 0.5" angular_velocity="0.05" yaw_drift="0.001" linear_acceleration="0.1"/>
+            <history samples="1"/>
+            <origin xyz="0.1 0.0 0.0" rpy="0.0 0.0 0.0"/>
+            <link name="SensorLink"/>
+            <ros_publisher topic="/sensors/imu"/>
+        </sensor>
+
+        <sensor name="gps" rate="1.0" type="gps">
+            <noise ned_position="0.5"/>
+            <history samples="1"/>
+            <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
+            <link name="SensorLink"/>
+            <ros_publisher topic="/sensors/gps"/>
+        </sensor>
+
+        <!--Replacement for missing compass feature(Compass was incompatible with ROS2).-->
+        <sensor name="Odometry" rate="10.0" type="odometry">
+            <noise position="10.05" velocity="10.01" angle="0.1" angular_velocity="0.05"/> 
+            <history samples="1"/>
+            <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
+            <link name="SensorLink"/>
+            <ros_publisher topic="/sensors/compass"/>
+        </sensor>
+    <!--ROS2 Integration-->
+    
+    <!--Actuator topics-->
+        <ros_subscriber thrusters="/thruster_setpoints" servos="/servo_setpoints"/>
+        <ros_publisher thrusters="/thruster_states" servos="/servo_states"/> <!--NB: Doesn't publish any data on real hardware-->
+
+        
+
+  
+    
+    <!--Sensor topics-->
+    
+    
+    
+
     </robot>
 </scenario>
 

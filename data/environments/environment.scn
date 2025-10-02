@@ -1,10 +1,10 @@
 <?xml version="1.0"?>
 <scenario>
   <environment>
-    <ned latitude="63.446827" longitude="10.421906"/>
+    <ned latitude="63.446827" longitude="10.421906"/> <!--Ålesund !-->
     <ocean>
         <water density="1031.0" jerlov="0.00"/>
-        <waves height="0.00"/>
+        <waves height="0.10"/>
         <particles enabled="true"/>
         <current type="uniform">
             <velocity xyz="0.0 0.0 0.0"/>
